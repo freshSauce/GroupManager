@@ -44,7 +44,6 @@ class GroupApiPut(Resource):
 		elif action == 'mute':
 			if user_id in group.group_mute_list:
 				return {"success": False, "error": "user already muted"}, 400
-			group.member_list.remove(user_id)
 			group.group_mute_list.append(user_id)
 		elif action == 'member':
 			if user_id in group.member_list:
