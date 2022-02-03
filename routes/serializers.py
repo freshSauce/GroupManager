@@ -1,6 +1,8 @@
 from flask import Response, request
 from database.models import User, Group
 from flask_restx import Resource
+from ..procedures import *
+
 
 
 class GroupApiGet(Resource):
