@@ -39,24 +39,20 @@ class GroupApiPut(Resource):
 		if action == 'ban':
 			if user_id in group.group_ban_list:
 				return {"success": False, "error": "user already banned"}, 400
-			if user_id in group.group_mute_list:
-				group.group_mute_list.remove(user_id)
-				group.save()
+			group.member_list.remove(user_id)
+			group.group_ban_list.append(user_id)
 		elif action == 'mute':
 			if user_id in group.group_mute_list:
 				return {"success": False, "error": "user already muted"}, 400
-			if user_id in group.group_ban_list:
-				group.group_ban_list.remove(user_id)
-				group.save()
+			group.member_list.remove(user_id)
+			group.group_mute_list.append(user_id)
 		elif action == 'member':
 			if user_id in group.member_list:
 				return {"success": False, "error": "user already member"}, 400
 			if user_id in group.group_ban_list:
-				group.group_ban_list.remove(user_id)
-				group.save()
+				return {"success": False, "error": "user banned"}, 400
 			if user_id in group.group_mute_list:
-				group.group_mute_list.remove(user_id)
-				group.save()
+				return {"success": False, "error": "user already member"}, 400
 		else:
 			return {"error": "available actions: ban, mute, member"}, 400
 		group.save()
