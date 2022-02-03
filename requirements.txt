@@ -21,3 +21,5 @@ six==1.16.0
 Werkzeug==2.0.2
 WTForms==3.0.1
 yapf==0.32.0
+nose2==0.10.0
+mongomock==4.0.0
