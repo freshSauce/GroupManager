@@ -12,4 +12,4 @@ class Group(db.Document):
     group_name = db.StringField(required=True)
     group_ban_list = db.ListField(db.DictField())
     group_mute_list = db.ListField(db.DictField())
-    member_list = db.ListField(db.StringField())
+    member_list = db.ListField(db.LongField())
