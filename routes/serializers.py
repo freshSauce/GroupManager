@@ -34,8 +34,8 @@ class GroupApiPut(Resource):
 	def put(self, group_id, action, user_id):
 		group = Group.objects(group_id=group_id).first()
 		if group == None:
-    			return {"success": False, "error": "group not found in db"}, 404
-   
+				return {"success": False, "error": "group not found in db"}, 404
+
 		if action == 'ban':
 			if user_id in group.group_ban_list:
 				return {"success": False, "error": "user already banned"}, 400

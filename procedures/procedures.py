@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 import requests as r
-
+from app import config
 from time import time as now
 from json import dumps
 
