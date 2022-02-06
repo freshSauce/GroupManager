@@ -36,18 +36,18 @@ class TestRoutes(MongoDBTest):
 		MongoDBTest.tearDownClass()
 		
 	def test_group_get(self):
-		response = self.client.get('/group/1')
+		response = self.client.get('/get_info/1')
 		data = response.data.decode('utf-8').replace('\n', '')
 		self.assertEqual(response.status_code, 200)
 		self.assertEqual(data, json.dumps(self.group.to_json()))
   
 	def test_group_get_not_found(self):
-		response = self.client.get('/group/-1')
-		self.assertEqual(response.status_code, 404)
+		response = self.client.get('/get_info/999999999999')
+		self.assertEqual(response.status_code, 400)
 	
 	def test_group_get_bad_request(self):
-		response = self.client.get('/group/error')
-		self.assertEqual(response.status_code, 400)
+		response = self.client.get('/get_info/error')
+		self.assertEqual(response.status_code, 404)
   
 	''' def test_group_post(self):
 		response = self.client.post('/group/1')
@@ -60,12 +60,12 @@ class TestRoutes(MongoDBTest):
   
 	def test_group_put(self):
 		actions = ['member', 'mute', 'ban']
-		elserror = {"error": "available actions: ban, mute, member"}
+		elserror = {"error": "available actions: ban, mute, member, promote"}
 		error = {"success": False, "error": "group not found in db"}
 		for action in actions:
 			user_id = len(self.group.member_list)
 			try:
-				response = self.client.put(f'/group/1/{action}/{user_id}')
+				response = self.client.put(f'/modify/1/{action}/{user_id}')
 				data = response.data.decode('utf-8').replace('\n', '')
 			except Exception as e:
 				continue
@@ -79,11 +79,11 @@ class TestRoutes(MongoDBTest):
 			)
 			self.assertEqual(self.group.member_list, [i+1 for i in range(user_id)])
    
-		response = self.client.put('/group/3/member/2')
+		response = self.client.put('/modify/3/member/2')
 		data = response.data.decode('utf-8').replace('\n', '')
 		self.assertEqual(response.status_code, 404)
 		self.assertEqual(data, json.dumps(error))
-		response = self.client.put('/group/1/add/22')
+		response = self.client.put('/modify/1/add/22')
 		data = response.data.decode('utf-8').replace('\n', '')
 		self.assertEqual(response.status_code, 400)
 		self.assertEqual(data, json.dumps(elserror))	
