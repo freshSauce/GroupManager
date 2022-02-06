@@ -10,7 +10,7 @@ class GroupApiGet(Resource):
 		try:
 			group = Group.objects(group_id=group_id).first()
 			if group == None:
-				return {"success": False, "error": "group not found in db"}, 404
+				return {"success": False, "error": "group not found in db"}, 400
 			return group.to_json()
 		except ValueError:
 			return {"success": False, "error": "group_id must be an integer"}, 400
