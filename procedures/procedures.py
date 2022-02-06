@@ -1,11 +1,11 @@
 from __future__ import absolute_import
 
 import requests as r
-from app import config
+import os
 from time import time as now
 from json import dumps
 
-API_URL = "https://api.telegram.org/bot{}".format(config["CONFIG"]["BOT_TOKEN"])
+API_URL = "https://api.telegram.org/bot{}".format(os.environ["API_KEY"])
 
 
 def ban_user(user_id, group_id, time):
@@ -19,9 +19,9 @@ def ban_user(user_id, group_id, time):
         }
     )
     if result.status_code == 200:
-        return True
+        return True, {}
     else:
-        return False
+        return False, result.json()
 
 
 def unban_user(user_id, group_id):
@@ -34,9 +34,9 @@ def unban_user(user_id, group_id):
         }
     )
     if result.status_code == 200:
-        return True
+        return True, {}
     else:
-        return False
+        return False, result.json()
 
 
 def kick_user(user_id, group_id):
@@ -48,9 +48,10 @@ def kick_user(user_id, group_id):
         }
     )
     if result.status_code == 200:
-        return True
+        return True, {}
     else:
-        return False
+        return False, result.json()
+
 
 
 def mute_user(user_id, group_id, time):
@@ -65,12 +66,26 @@ def mute_user(user_id, group_id, time):
         }
     )
     if result.status_code == 200:
-        return True
+        return True, {}
     else:
-        return False
+        return False, result.json()
+
+def unmute_user(user_id, group_id):
+    result = r.post(
+        API_URL + "/restrictChatMember",
+        data={
+            "chat_id": group_id,
+            "user_id": user_id,
+            "permissions": dumps({"can_send_messages": True})
+        }
+    )
+    if result.status_code == 200:
+        return True, {}
+    else:
+        return False, result.json()
 
 
-def promote_to_moderator(user_id, group_id):
+def promote_user(user_id, group_id):
     result = r.post(
         API_URL + "/promoteChatMember",
         data={
@@ -92,8 +107,36 @@ def promote_to_moderator(user_id, group_id):
             }
         )
         if result.status_code == 200:
-            return True
+            return True, {}
         else:
-            return False
+            return False, result.json() 
     else:
-        return False
+        return False, result.json()
+
+def demote_user(user_id, group_id):
+    result = r.post(
+        API_URL + "/promoteChatMember",
+        data={
+            "chat_id": group_id,
+            "user_id": user_id,
+            "can_delete_messages": False,
+            "can_invite_users": False,
+            "can_restrict_members": False,
+            "can_pin_messages": False,
+        }
+    )
+    if result.status_code == 200:
+        result = r.post(
+            API_URL + "/setChatAdministratorCustomTitle",
+            data={
+                "chat_id": group_id,
+                "user_id": user_id,
+                "custom_title": ""
+            }
+        )
+        if result.status_code == 200:
+            return True, {}
+        else:
+            return False, result.json()
+    else:
+        return False, result.json()
